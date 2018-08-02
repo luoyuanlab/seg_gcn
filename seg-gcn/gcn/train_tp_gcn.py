@@ -105,8 +105,6 @@ flags.DEFINE_integer('embedding_dim_0', int(features[0].shape[1]), 'hidden layer
 adj = np.concatenate([np.load('/tp_adj_padded_train.npy'),np.load('/tp_adj_padded_test.npy')])
 
 
-sentence_length = np.concatenate([np.load('/sentence_length_tuple_train_tp.npy'),np.load('/sentence_length_tuple_test_tp.npy')])
-
 
 label = np.vstack((label1,label2))
 
@@ -134,7 +132,6 @@ for epoch in range(0,label.shape[0]):
     
     features_mat = np.zeros(shape=[max_size,features[0].shape[1]]) 
     adj_underlying = adj[current_ind]
-    sentence_length_underlying = sentence_length[current_ind]
     dep_mat = np.zeros(shape=[max_size,adj_underlying.shape[0]]) 
     
     # add diagnal as 1
@@ -145,7 +142,6 @@ for epoch in range(0,label.shape[0]):
     adj_underlying = adj_underlying.todense()
     adj_neightborhood = adj_neightborhood.todense()
     
-#    if sentence_length_underlying < 50:
     adj_underlying = adj_underlying + adj_neightborhood
     features_underlying = features[current_ind].todense()
     
