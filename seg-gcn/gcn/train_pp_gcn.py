@@ -353,9 +353,7 @@ with tf.device('/cpu:0'):
         cost_val_f1.append(cmPRF(cm,ncstart=1)[5])
         cost_val_loss.append(outs_val_out[0])
         
-            # Print results
-        if epoch_h > -1:
-
+        if cost_val_f1[-1] >= np.mean(cost_val_f1)
             outs_test_out = sess.run([model.loss, model.accuracy, model.outputs], feed_dict=feed_dict_test_sing)
             cm = sklearn.metrics.confusion_matrix(y_test.argmax(axis=1), outs_test_out[2].argmax(axis=1))
 
@@ -364,10 +362,12 @@ with tf.device('/cpu:0'):
 
             print("Epoch:", '%04d' % (epoch_h), "train_loss=", "{:.5f}".format(train_loss),
                           "train_f1=", "{:.5f}".format(train_f1), "val_loss=", "{:.5f}".format(cost_val_loss[-1]), "val_F1=", "{:.5f}".format(cost_val_f1[-1]),"time=", "{:.5f}".format(time.time() - t),"test_f1=", "{:.5f}".format(test_f1[-1]), "test_loss=", "{:.5f}".format(test_loss[-1]))
-            print("mipre=", "{:.5f}".format(cmPRF(cm,ncstart=1)[3]),"mirec=", "{:.5f}".format(cmPRF(cm,ncstart=1)[4]),"mif=", "{:.5f}".format(cmPRF(cm,ncstart=1)[5]))     
+            print("mipre=", "{:.5f}".format(cmPRF(cm,ncstart=1)[3]),"mirec=", "{:.5f}".format(cmPRF(cm,ncstart=1)[4]),"mif=", "{:.5f}".format(cmPRF(cm,ncstart=1)[5]))
+            print(cm)
             
-        else:
-            print(epoch_h)
+        else
+            print("Epoch:", '%04d' % (epoch_h), "train_loss=", "{:.5f}".format(train_loss),
+                          "train_f1=", "{:.5f}".format(train_f1), "val_loss=", "{:.5f}".format(cost_val_loss[-1]), "val_F1=", "{:.5f}".format(cost_val_f1[-1]),"time=", "{:.5f}".format(time.time() - t))
 
             
         
