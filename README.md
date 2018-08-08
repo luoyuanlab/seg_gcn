@@ -1,4 +1,4 @@
-# Segment Graph Convolutional Network (GCN) for relation classification
+# Segment Graph Convolutional and Recurrent Neural Network (Seg-GCRN) for relation classification
 ### Requirements
 Code is written in Python (2.7) and requires Tensor Flow.
 
