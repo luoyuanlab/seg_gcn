@@ -2,14 +2,23 @@
 ### Requirements
 Code is written in Python (2.7) and requires Tensor Flow.
 
-
-
-### To get embeddings we used
+### 1. To get embeddings we used
 https://northwestern.box.com/s/eprxyxmee37p3d6khqbpn125tyttq4u6
 
 Include embeddings trained on MIMIC3 corpus, dimensions from 100 to 600.
 
-### To get concept and relation information (e.g., location in the sentence, concept type...) we used
+### 2. To get concept and relation information (e.g., location in the sentence, concept type...) we used
 https://northwestern.box.com/s/bppccoergkjj66gozqgjpi3h0dnmctmm
 
+### 3. Generate the embedding matrix and syntactic dependencies based on information from 1 and 2 above
+Run par1_sp.py, par4_sp.py for training and testing datasets of TeP relation category
+Run par2_sp.py, par5_sp.py for training and testing datasets of TrP relation category
+Run par3_sp.py, par6_sp.py for training and testing datasets of PP relation category
 
+### 4. Run the Seg-GCRN for different datasets based on information from 3 above
+Run train_tep_gcn.py for TeP relation category
+Run train_tp_gcn.py for TrP relation category
+Run train_pp_gcn.py for PP relation category
+
+### Sidenote: Using the GPU
+By default, tensorflow is multiple-GPU friendly and it automatically distributes the loads. However, you can also manually lock your computation to one or more of the GPUs. (https://www.tensorflow.org/programmers_guide/using_gpu)
