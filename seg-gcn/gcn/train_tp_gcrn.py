@@ -92,18 +92,20 @@ flags.DEFINE_integer('early_stopping', 50, 'Tolerance for early stopping (# of e
 
 traing_data_cutoff = 9
 
-label1 = np.load('/all_rel/tp_all_train.npy')[:,[2,8]]
-label1_info = np.float32(np.load('/all_rel/tp_all_train.npy')[:,2:8])
+label1 = np.load('/home/yld8809/all_rel/tp_all_train.npy')[:,[2,8]]
+label1_info = np.float32(np.load('/home/yld8809/all_rel/tp_all_train.npy')[:,2:8])
 
-label2 = np.load('/all_rel/tp_all_test.npy')[:,[2,8]]
-label2_info = np.float32(np.load('/all_rel/tp_all_test.npy')[:,2:8])
+label2 = np.load('/home/yld8809/all_rel/tp_all_test.npy')[:,[2,8]]
+label2_info = np.float32(np.load('/home/yld8809/all_rel/tp_all_test.npy')[:,2:8])
 
 unique_word_index = np.vstack((label1_info,label2_info))
-features = np.concatenate([np.load('/tp_features_padded_train.npy'),np.load('/tp_features_padded_test.npy')])
+features = np.concatenate([np.load('/home/yld8809/tp_features_padded_train.npy'),np.load('/home/yld8809/tp_features_padded_test.npy')])
 flags.DEFINE_integer('embedding_dim_0', int(features[0].shape[1]), 'hidden layer 1.')
 
-adj = np.concatenate([np.load('/tp_adj_padded_train.npy'),np.load('/tp_adj_padded_test.npy')])
+adj = np.concatenate([np.load('/home/yld8809/tp_adj_padded_train.npy'),np.load('/home/yld8809/tp_adj_padded_test.npy')])
 
+
+sentence_length = np.concatenate([np.load('/home/yld8809/sentence_length_tuple_train_tp.npy'),np.load('/home/yld8809/sentence_length_tuple_test_tp.npy')])
 
 
 label = np.vstack((label1,label2))
@@ -132,6 +134,7 @@ for epoch in range(0,label.shape[0]):
     
     features_mat = np.zeros(shape=[max_size,features[0].shape[1]]) 
     adj_underlying = adj[current_ind]
+    sentence_length_underlying = sentence_length[current_ind]
     dep_mat = np.zeros(shape=[max_size,adj_underlying.shape[0]]) 
     
     # add diagnal as 1
@@ -142,6 +145,7 @@ for epoch in range(0,label.shape[0]):
     adj_underlying = adj_underlying.todense()
     adj_neightborhood = adj_neightborhood.todense()
     
+#    if sentence_length_underlying < 50:
     adj_underlying = adj_underlying + adj_neightborhood
     features_underlying = features[current_ind].todense()
     
@@ -164,7 +168,7 @@ placeholders = {
     'weights': tf.placeholder(tf.float32, shape=tf.TensorShape([label.shape[1],1]))
 }
                                
-epoch_val = int(num_batch/10*traing_data_cutoff)
+epoch_val = int(num_batch/10*traing_data_cutoff-1)
 current_ind_list = rand_ind[range(round((rand_ind.shape[0]/num_batch)*epoch_val),rand_ind.shape[0])]
 
 features_val_feed = np.zeros(shape=[current_ind_list.shape[0], adj[0].shape[0], features[0].shape[1]],dtype=np.float32)
@@ -267,7 +271,7 @@ with tf.device('/cpu:0'):
     
     for epoch_h in range(0,100):   
         t = time.time()
-        shuffle_ind_per_epoch = np.asarray(range(0,int(num_batch/10*traing_data_cutoff)))
+        shuffle_ind_per_epoch = np.asarray(range(0,int(num_batch/10*traing_data_cutoff-1)))
         np.random.shuffle(shuffle_ind_per_epoch)
         
         for epoch_m in shuffle_ind_per_epoch:
@@ -331,7 +335,8 @@ with tf.device('/cpu:0'):
         cost_val_f1.append(cmPRF(cm,ncstart=1)[5])
         cost_val_loss.append(outs_val_out[0])
         
-        if cost_val_f1[-1] >= np.mean(cost_val_f1)
+            # Print results
+        if cost_val_f1[-1] >= np.mean(cost_val_f1):
             outs_test_out = sess.run([model.loss, model.accuracy, model.outputs], feed_dict=feed_dict_test_sing)
             cm = sklearn.metrics.confusion_matrix(y_test.argmax(axis=1), outs_test_out[2].argmax(axis=1))
 
@@ -343,10 +348,10 @@ with tf.device('/cpu:0'):
             print("mipre=", "{:.5f}".format(cmPRF(cm,ncstart=1)[3]),"mirec=", "{:.5f}".format(cmPRF(cm,ncstart=1)[4]),"mif=", "{:.5f}".format(cmPRF(cm,ncstart=1)[5]))
             print(cm)
             
-        else
+        else:
             print("Epoch:", '%04d' % (epoch_h), "train_loss=", "{:.5f}".format(train_loss),
                           "train_f1=", "{:.5f}".format(train_f1), "val_loss=", "{:.5f}".format(cost_val_loss[-1]), "val_F1=", "{:.5f}".format(cost_val_f1[-1]),"time=", "{:.5f}".format(time.time() - t))
-						  
+        
         if epoch_h > FLAGS.early_stopping and cost_val_loss[-1] > np.mean(cost_val_loss[-(FLAGS.early_stopping+1):-1]):
             outs_test_out = sess.run([model.loss, model.accuracy, model.outputs], feed_dict=feed_dict_test_sing)
             cm = sklearn.metrics.confusion_matrix(y_test.argmax(axis=1), outs_test_out[2].argmax(axis=1))

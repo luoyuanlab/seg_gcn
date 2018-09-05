@@ -75,11 +75,8 @@ def cmPRF(cm, ncstart=1): # cm confusion matrix # jump over "noun"
 
 model_size = 300
 embedding_dim_1 = 300
-# embedding_dim_2 = 300
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.') # use 0.001 for now please!!!!
-flags.DEFINE_float('dropout_gcn', 0.0, 'Dropout rate (1 - keep probability).')
-flags.DEFINE_float('dropout_lstm', 0.1, 'Dropout rate (1 - keep probability).')
-
+flags.DEFINE_float('dropout_lstm', 0.5, 'Dropout rate (1 - keep probability).')
 flags.DEFINE_integer('embedding_dim_1', embedding_dim_1, 'Number of LSTM node.')
 # flags.DEFINE_integer('embedding_dim_2', embedding_dim_2, 'Number of LSTM node.')
 
@@ -89,51 +86,46 @@ flags.DEFINE_integer('hidden_dim_b', int(embedding_dim_1/2), 'Number of LSTM nod
 # flags.DEFINE_integer('hidden_dim_mono', 300, 'Number of LSTM node for mono.')
 # flags.DEFINE_integer('embedding_dim_2', 150, 'Number of LSTM node.')
 # flags.DEFINE_integer('lstm_node', 300, 'Number of LSTM node.')
-flags.DEFINE_float('weight_decay_1', 1, 'Weight for L2 loss on Fourier matrix')
+flags.DEFINE_float('weight_decay_1', 2, 'Weight for L2 loss on Fourier matrix')
 # flags.DEFINE_float('weight_decay_lstm', 0.1, 'Weight for L2 loss on LSTM')
 flags.DEFINE_float('weight_decay_wb', 0, 'Weight for L2 loss on W and b matrix.')
 flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
-flags.DEFINE_integer('early_stopping', 50, 'Tolerance for early stopping (# of epochs).')
+flags.DEFINE_integer('early_stopping', 100, 'Tolerance for early stopping (# of epochs).')
 # flags.DEFINE_integer('hidden_layer1', int(features[0].shape[1]), 'hidden layer 1.')
+
 traing_data_cutoff = 9
-ratio_s_n = 4
-num_batch = 50
 
-label1 = np.load('/all_rel/pp_all_train_sort.npy')[:,[2,8]]
-label1_info = np.float32(np.load('/all_rel/pp_all_train_sort.npy')[:,2:8])
+label1 = np.load('/home/yld8809/all_rel/tep_all_train.npy')[:,[2,8]]
+label1_info = np.float32(np.load('/home/yld8809/all_rel/tep_all_train.npy')[:,2:8])
 
-label2 = np.load('/all_rel/pp_all_test_sort.npy')[:,[2,8]]
-label2_info = np.float32(np.load('/all_rel/pp_all_test_sort.npy')[:,2:8])
+label2 = np.load('/home/yld8809/all_rel/tep_all_test.npy')[:,[2,8]]
+label2_info = np.float32(np.load('/home/yld8809/all_rel/tep_all_test.npy')[:,2:8])
 
 unique_word_index = np.vstack((label1_info,label2_info))
-features = np.concatenate([np.load('/pp_features_padded_train'+str(model_size)+'.npy'),np.load('/pp_features_padded_test'+str(model_size)+'.npy')])
-
+features = np.concatenate([np.load('/home/yld8809/tep_features_padded_train.npy'),np.load('/home/yld8809/tep_features_padded_test.npy')])
 flags.DEFINE_integer('embedding_dim_0', int(features[0].shape[1]), 'hidden layer 1.')
 
-adj = np.concatenate([np.load('/pp_adj_padded_train'+str(model_size)+'.npy'),np.load('/pp_adj_padded_test'+str(model_size)+'.npy')])
+
+adj = np.concatenate([np.load('/home/yld8809/tep_adj_padded_train.npy'),np.load('/home/yld8809/tep_adj_padded_test.npy')])
+
+
+sentence_length = np.concatenate([np.load('/home/yld8809/sentence_length_tuple_train_tep.npy'),np.load('/home/yld8809/sentence_length_tuple_test_tep.npy')])
 
 
 label = np.vstack((label1,label2))
 
 label = lb.fit_transform(label[:,1])
-label = np.hstack((1 - label,label))
-label = np.hstack((label[:,np.asarray(np.where(lb.classes_ == 'PnP')).reshape(-1)],label[:,np.asarray(np.where(lb.classes_ != 'PnP')).reshape(-1)]))
-
+# make trnp the first label
+label = np.hstack((label[:,np.asarray(np.where(lb.classes_ == 'TenP')).reshape(-1)],label[:,np.asarray(np.where(lb.classes_ != 'TenP')).reshape(-1)]))
 
 class_weight = np.ones((label.shape[1],1))
 class_weight[0]=1
 
-noise_index = np.where(label[0:label1.shape[0],0]==1)
-true_index = np.where(label[0:label1.shape[0],0]!=1)
-noise_index = noise_index[0]
-true_index = true_index[0]
-np.random.shuffle(noise_index)
 
-# rand_ind = np.hstack((true_index,noise_index))
-rand_ind = np.hstack((true_index,noise_index[0:int(true_index.shape[0]*ratio_s_n)]))
-# rand_ind = np.hstack((true_index,true_index,noise_index))
-# rand_ind = np.asarray(range(0,label1.shape[0]))                         
+rand_ind = np.asarray(range(0,label1.shape[0]))                         
 np.random.shuffle(rand_ind)
+num_batch = 50
+
 
 
 max_padding_size = int(adj[0].shape[0])
@@ -146,18 +138,19 @@ for epoch in range(0,label.shape[0]):
     
     features_mat = np.zeros(shape=[max_size,features[0].shape[1]]) 
     adj_underlying = adj[current_ind]
+    sentence_length_underlying = sentence_length[current_ind]
     dep_mat = np.zeros(shape=[max_size,adj_underlying.shape[0]]) 
     
     # add diagnal as 1
     adj_neightborhood = sp.eye(adj_underlying.shape[0])
     adj_neightborhood.setdiag(30,0)
+
     
     adj_underlying = adj_underlying.todense()
     adj_neightborhood = adj_neightborhood.todense()
     
 #    if sentence_length_underlying < 50:
     adj_underlying = adj_underlying + adj_neightborhood
-
     
     features_underlying = features[current_ind].todense()
     
@@ -177,11 +170,10 @@ placeholders = {
     'labels': tf.placeholder(tf.float32, shape=(None, label.shape[1])),
     'labels_mask': tf.placeholder(tf.int32),
     'dropout_lstm': tf.placeholder_with_default(0.0, shape=()),
-    'dropout_gcn': tf.placeholder_with_default(0.0, shape=()),
     'weights': tf.placeholder(tf.float32, shape=tf.TensorShape([label.shape[1],1]))
 }
                                
-epoch_val = int(num_batch/10*traing_data_cutoff)
+epoch_val = int(num_batch/10*traing_data_cutoff-1)
 current_ind_list = rand_ind[range(round((rand_ind.shape[0]/num_batch)*epoch_val),rand_ind.shape[0])]
 
 features_val_feed = np.zeros(shape=[current_ind_list.shape[0], adj[0].shape[0], features[0].shape[1]],dtype=np.float32)
@@ -208,8 +200,7 @@ for epoch in range(0,current_ind_list.shape[0]):
     else:
         all_phrase_val[epoch, word_ind_sorted[0]:(word_ind_sorted[1]+1),0] = 4
         all_phrase_val[epoch, word_ind_sorted[2]:(word_ind_sorted[3]+1),0] = 2
-
-
+        
     
     all_phrase_val[epoch, (word_ind_sorted[1]+1):(word_ind_sorted[2]),0] = 3
         
@@ -244,8 +235,7 @@ for epoch in range(0,current_ind_list.shape[0]):
     word_ind_sorted = np.sort(word_ind_sorted)
     
     all_phrase_test[epoch, 0:word_ind_sorted[0],0] = 1
-
-
+    
     if word_ind_sorted[0] == temp_embedding_ind[2]:
         all_phrase_test[epoch, word_ind_sorted[0]:(word_ind_sorted[1]+1),0] = 2
         all_phrase_test[epoch, word_ind_sorted[2]:(word_ind_sorted[3]+1),0] = 4
@@ -286,7 +276,7 @@ with tf.device('/cpu:0'):
     
     for epoch_h in range(0,100):   
         t = time.time()
-        shuffle_ind_per_epoch = np.asarray(range(0,int(num_batch/10*traing_data_cutoff)))
+        shuffle_ind_per_epoch = np.asarray(range(0,int(num_batch/10*traing_data_cutoff-1)))
         np.random.shuffle(shuffle_ind_per_epoch)
         
         for epoch_m in shuffle_ind_per_epoch:
@@ -312,7 +302,6 @@ with tf.device('/cpu:0'):
 
                 
                 all_phrase_par[epoch, 0:word_ind_sorted[0],0] = 1
-                
 
                 if word_ind_sorted[0] == temp_embedding_ind[2]:
                     all_phrase_par[epoch, word_ind_sorted[0]:(word_ind_sorted[1]+1),0] = 2
@@ -322,20 +311,18 @@ with tf.device('/cpu:0'):
                     all_phrase_par[epoch, word_ind_sorted[2]:(word_ind_sorted[3]+1),0] = 2
 
 
-
                 all_phrase_par[epoch, (word_ind_sorted[1]+1):(word_ind_sorted[2]),0] = 3
 
 
                 all_phrase_par[epoch, (word_ind_sorted[3]+1):max_padding_size,0] = 5
 
+
                 y_train[epoch,:] = np.float32(label[current_ind,:]).reshape(1,-1)
-                
                 
                 eigvec_train[epoch,:,:] = preprocess_adj(adj[current_ind])
 
             feed_dict = construct_feed_dict_sgc(features_train_feed, eigvec_train, y_train, train_mask, all_phrase_par, class_weight, placeholders)
             feed_dict.update({placeholders['dropout_lstm']: FLAGS.dropout_lstm})
-            feed_dict.update({placeholders['dropout_gcn']: FLAGS.dropout_gcn})
 
             # Training step
             outs = sess.run([model.opt_op, model.loss, model.accuracy,model.outputs], feed_dict=feed_dict)
@@ -353,7 +340,9 @@ with tf.device('/cpu:0'):
         cost_val_f1.append(cmPRF(cm,ncstart=1)[5])
         cost_val_loss.append(outs_val_out[0])
         
-        if cost_val_f1[-1] >= np.mean(cost_val_f1)
+            # Print results
+#        if cost_val_loss[-1] == min(cost_val_loss):
+        if cost_val_f1[-1] >= np.mean(cost_val_f1):
             outs_test_out = sess.run([model.loss, model.accuracy, model.outputs], feed_dict=feed_dict_test_sing)
             cm = sklearn.metrics.confusion_matrix(y_test.argmax(axis=1), outs_test_out[2].argmax(axis=1))
 
@@ -365,10 +354,9 @@ with tf.device('/cpu:0'):
             print("mipre=", "{:.5f}".format(cmPRF(cm,ncstart=1)[3]),"mirec=", "{:.5f}".format(cmPRF(cm,ncstart=1)[4]),"mif=", "{:.5f}".format(cmPRF(cm,ncstart=1)[5]))
             print(cm)
             
-        else
+        else:
             print("Epoch:", '%04d' % (epoch_h), "train_loss=", "{:.5f}".format(train_loss),
                           "train_f1=", "{:.5f}".format(train_f1), "val_loss=", "{:.5f}".format(cost_val_loss[-1]), "val_F1=", "{:.5f}".format(cost_val_f1[-1]),"time=", "{:.5f}".format(time.time() - t))
-
             
         
         if epoch_h > FLAGS.early_stopping and cost_val_loss[-1] > np.mean(cost_val_loss[-(FLAGS.early_stopping+1):-1]):
@@ -382,9 +370,10 @@ with tf.device('/cpu:0'):
             
 print("Optimization Finished!")
 
+
     
-np.save("/home/yld8809/cm_pp_gcn", cm)
-np.save("/home/yld8809/cost_val_f1_pp_gcn",cost_val_f1)
-np.save("/home/yld8809/cost_val_loss_pp_gcn",cost_val_loss)
-np.save("/home/yld8809/cost_test_f1_pp_gcn",test_f1)
-np.save("/home/yld8809/cost_test_loss_pp_gcn",test_loss)
+np.save("/home/yld8809/cm_tep_gcn", cm)
+np.save("/home/yld8809/cost_val_f1_tep_gcn",cost_val_f1)
+np.save("/home/yld8809/cost_val_loss_tep_gcn",cost_val_loss)
+np.save("/home/yld8809/cost_test_f1_tep_gcn",test_f1)
+np.save("/home/yld8809/cost_test_loss_tep_gcn",test_loss)
