@@ -95,21 +95,21 @@ flags.DEFINE_integer('early_stopping', 100, 'Tolerance for early stopping (# of 
 
 traing_data_cutoff = 9
 
-label1 = np.load('/home/yld8809/all_rel/tep_all_train.npy')[:,[2,8]]
-label1_info = np.float32(np.load('/home/yld8809/all_rel/tep_all_train.npy')[:,2:8])
+label1 = np.load('all_rel/tep_all_train.npy')[:,[2,8]]
+label1_info = np.float32(np.load('all_rel/tep_all_train.npy')[:,2:8])
 
-label2 = np.load('/home/yld8809/all_rel/tep_all_test.npy')[:,[2,8]]
-label2_info = np.float32(np.load('/home/yld8809/all_rel/tep_all_test.npy')[:,2:8])
+label2 = np.load('all_rel/tep_all_test.npy')[:,[2,8]]
+label2_info = np.float32(np.load('all_rel/tep_all_test.npy')[:,2:8])
 
 unique_word_index = np.vstack((label1_info,label2_info))
-features = np.concatenate([np.load('/home/yld8809/tep_features_padded_train.npy'),np.load('/home/yld8809/tep_features_padded_test.npy')])
+features = np.concatenate([np.load('tep_features_padded_train.npy'),np.load('tep_features_padded_test.npy')])
 flags.DEFINE_integer('embedding_dim_0', int(features[0].shape[1]), 'hidden layer 1.')
 
 
-adj = np.concatenate([np.load('/home/yld8809/tep_adj_padded_train.npy'),np.load('/home/yld8809/tep_adj_padded_test.npy')])
+adj = np.concatenate([np.load('tep_adj_padded_train.npy'),np.load('tep_adj_padded_test.npy')])
 
 
-sentence_length = np.concatenate([np.load('/home/yld8809/sentence_length_tuple_train_tep.npy'),np.load('/home/yld8809/sentence_length_tuple_test_tep.npy')])
+sentence_length = np.concatenate([np.load('sentence_length_tuple_train_tep.npy'),np.load('sentence_length_tuple_test_tep.npy')])
 
 
 label = np.vstack((label1,label2))
@@ -372,8 +372,8 @@ print("Optimization Finished!")
 
 
     
-np.save("/home/yld8809/cm_tep_gcn", cm)
-np.save("/home/yld8809/cost_val_f1_tep_gcn",cost_val_f1)
-np.save("/home/yld8809/cost_val_loss_tep_gcn",cost_val_loss)
-np.save("/home/yld8809/cost_test_f1_tep_gcn",test_f1)
-np.save("/home/yld8809/cost_test_loss_tep_gcn",test_loss)
+np.save("cm_tep_gcn", cm)
+np.save("cost_val_f1_tep_gcn",cost_val_f1)
+np.save("cost_val_loss_tep_gcn",cost_val_loss)
+np.save("cost_test_f1_tep_gcn",test_f1)
+np.save("cost_test_loss_tep_gcn",test_loss)
