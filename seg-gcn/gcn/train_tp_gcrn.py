@@ -1,8 +1,6 @@
 from __future__ import division
 from __future__ import print_function
 
-from __future__ import division
-from __future__ import print_function
 
 import time
 import tensorflow as tf
@@ -365,8 +363,8 @@ print("Optimization Finished!")
 
 
     
-np.save("/home/yld8809/cm_tp_gcn", cm)
-np.save("/home/yld8809/cost_val_f1_tp_gcn",cost_val_f1)
-np.save("/home/yld8809/cost_val_loss_tp_gcn",cost_val_loss)
-np.save("/home/yld8809/cost_test_f1_tp_gcn",test_f1)
-np.save("/home/yld8809/cost_test_loss_tp_gcn",test_loss)
+np.save("cm_tp_gcn", cm)
+np.save("cost_val_f1_tp_gcn",cost_val_f1)
+np.save("cost_val_loss_tp_gcn",cost_val_loss)
+np.save("cost_test_f1_tp_gcn",test_f1)
+np.save("cost_test_loss_tp_gcn",test_loss)
