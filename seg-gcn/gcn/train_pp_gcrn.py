@@ -99,11 +99,11 @@ traing_data_cutoff = 9
 ratio_s_n = 4
 num_batch = 50
 
-label1 = np.load('/home/yld8809/all_rel/pp_all_train_sort.npy')[:,[2,8]]
-label1_info = np.float32(np.load('/home/yld8809/all_rel/pp_all_train_sort.npy')[:,2:8])
+label1 = np.load('/home/yld8809/all_rel/pp_all_train.npy')[:,[2,8]]
+label1_info = np.float32(np.load('/home/yld8809/all_rel/pp_all_train.npy')[:,2:8])
 
-label2 = np.load('/home/yld8809/all_rel/pp_all_test_sort.npy')[:,[2,8]]
-label2_info = np.float32(np.load('/home/yld8809/all_rel/pp_all_test_sort.npy')[:,2:8])
+label2 = np.load('/home/yld8809/all_rel/pp_all_test.npy')[:,[2,8]]
+label2_info = np.float32(np.load('/home/yld8809/all_rel/pp_all_test.npy')[:,2:8])
 
 unique_word_index = np.vstack((label1_info,label2_info))
 features = np.concatenate([np.load('/home/yld8809/pp_features_padded_train'+str(model_size)+'.npy'),np.load('/home/yld8809/pp_features_padded_test'+str(model_size)+'.npy')])
