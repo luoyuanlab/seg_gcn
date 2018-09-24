@@ -90,20 +90,20 @@ flags.DEFINE_integer('early_stopping', 50, 'Tolerance for early stopping (# of e
 
 traing_data_cutoff = 9
 
-label1 = np.load('/home/yld8809/all_rel/tp_all_train.npy')[:,[2,8]]
-label1_info = np.float32(np.load('/home/yld8809/all_rel/tp_all_train.npy')[:,2:8])
+label1 = np.load('all_rel/tp_all_train.npy')[:,[2,8]]
+label1_info = np.float32(np.load('all_rel/tp_all_train.npy')[:,2:8])
 
-label2 = np.load('/home/yld8809/all_rel/tp_all_test.npy')[:,[2,8]]
-label2_info = np.float32(np.load('/home/yld8809/all_rel/tp_all_test.npy')[:,2:8])
+label2 = np.load('all_rel/tp_all_test.npy')[:,[2,8]]
+label2_info = np.float32(np.load('all_rel/tp_all_test.npy')[:,2:8])
 
 unique_word_index = np.vstack((label1_info,label2_info))
-features = np.concatenate([np.load('/home/yld8809/tp_features_padded_train.npy'),np.load('/home/yld8809/tp_features_padded_test.npy')])
+features = np.concatenate([np.load('tp_features_padded_train.npy'),np.load('tp_features_padded_test.npy')])
 flags.DEFINE_integer('embedding_dim_0', int(features[0].shape[1]), 'hidden layer 1.')
 
-adj = np.concatenate([np.load('/home/yld8809/tp_adj_padded_train.npy'),np.load('/home/yld8809/tp_adj_padded_test.npy')])
+adj = np.concatenate([np.load('tp_adj_padded_train.npy'),np.load('tp_adj_padded_test.npy')])
 
 
-sentence_length = np.concatenate([np.load('/home/yld8809/sentence_length_tuple_train_tp.npy'),np.load('/home/yld8809/sentence_length_tuple_test_tp.npy')])
+sentence_length = np.concatenate([np.load('sentence_length_tuple_train_tp.npy'),np.load('sentence_length_tuple_test_tp.npy')])
 
 
 label = np.vstack((label1,label2))
