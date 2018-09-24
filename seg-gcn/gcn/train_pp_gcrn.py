@@ -1,8 +1,6 @@
 from __future__ import division
 from __future__ import print_function
 
-from __future__ import division
-from __future__ import print_function
 
 import time
 import tensorflow as tf
@@ -99,21 +97,21 @@ traing_data_cutoff = 9
 ratio_s_n = 4
 num_batch = 50
 
-label1 = np.load('/home/yld8809/all_rel/pp_all_train.npy')[:,[2,8]]
-label1_info = np.float32(np.load('/home/yld8809/all_rel/pp_all_train.npy')[:,2:8])
+label1 = np.load('all_rel/pp_all_train.npy')[:,[2,8]]
+label1_info = np.float32(np.load('all_rel/pp_all_train.npy')[:,2:8])
 
-label2 = np.load('/home/yld8809/all_rel/pp_all_test.npy')[:,[2,8]]
-label2_info = np.float32(np.load('/home/yld8809/all_rel/pp_all_test.npy')[:,2:8])
+label2 = np.load('all_rel/pp_all_test.npy')[:,[2,8]]
+label2_info = np.float32(np.load('all_rel/pp_all_test.npy')[:,2:8])
 
 unique_word_index = np.vstack((label1_info,label2_info))
-features = np.concatenate([np.load('/home/yld8809/pp_features_padded_train'+str(model_size)+'.npy'),np.load('/home/yld8809/pp_features_padded_test'+str(model_size)+'.npy')])
+features = np.concatenate([np.load('pp_features_padded_train'+str(model_size)+'.npy'),np.load('pp_features_padded_test'+str(model_size)+'.npy')])
 
 flags.DEFINE_integer('embedding_dim_0', int(features[0].shape[1]), 'hidden layer 1.')
 
-adj = np.concatenate([np.load('/home/yld8809/pp_adj_padded_train'+str(model_size)+'.npy'),np.load('/home/yld8809/pp_adj_padded_test'+str(model_size)+'.npy')])
+adj = np.concatenate([np.load('pp_adj_padded_train'+str(model_size)+'.npy'),np.load('pp_adj_padded_test'+str(model_size)+'.npy')])
 
 
-sentence_length = np.concatenate([np.load('/home/yld8809/sentence_length_tuple_train_pp'+str(model_size)+'.npy'),np.load('/home/yld8809/sentence_length_tuple_test_pp'+str(model_size)+'.npy')])
+sentence_length = np.concatenate([np.load('sentence_length_tuple_train_pp'+str(model_size)+'.npy'),np.load('sentence_length_tuple_test_pp'+str(model_size)+'.npy')])
 
 
 label = np.vstack((label1,label2))
@@ -388,8 +386,8 @@ with tf.device('/cpu:0'):
 print("Optimization Finished!")
 
     
-np.save("/home/yld8809/cm_pp_gcn", cm)
-np.save("/home/yld8809/cost_val_f1_pp_gcn",cost_val_f1)
-np.save("/home/yld8809/cost_val_loss_pp_gcn",cost_val_loss)
-np.save("/home/yld8809/cost_test_f1_pp_gcn",test_f1)
-np.save("/home/yld8809/cost_test_loss_pp_gcn",test_loss)
+np.save("cm_pp_gcn", cm)
+np.save("cost_val_f1_pp_gcn",cost_val_f1)
+np.save("cost_val_loss_pp_gcn",cost_val_loss)
+np.save("cost_test_f1_pp_gcn",test_f1)
+np.save("cost_test_loss_pp_gcn",test_loss)
