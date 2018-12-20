@@ -8,7 +8,7 @@ https://northwestern.box.com/s/eprxyxmee37p3d6khqbpn125tyttq4u6
 Include embeddings trained on MIMIC3 corpus, dimensions from 100 to 600.
 
 ### 2. To get concept and relation information (e.g., location in the sentence, concept type...) we used
-The original data has been removed due to the change of policy from the data provider. We are trying to update the result along with reduced concept and relation information soon.
+The original data have been removed from the repository due to the change of policy from the data provider. We are trying to update the result along with reduced concept and relation information soon.
 
 ### 3. Generate the embedding matrix and syntactic dependencies based on information from 1 and 2 above
 Run par1_sp.py, par4_sp.py for training and testing datasets of TeP relation category
