@@ -22,8 +22,18 @@ Run train_pp_gcn.py for PP relation category
 
 ### Sidenote: Using the GPU
 By default, tensorflow is multiple-GPU friendly and it automatically distributes the loads. However, you can also manually lock your computation to one or more of the GPUs. (https://www.tensorflow.org/programmers_guide/using_gpu)
-
-The Performance of Seg-GCRN
-System	                    Medical treatment–problem relations		Medical test–problem relations		Medical problem–problem relations
-	                                    P	    R	    F		                      P	    R	    F		                  P	    R   	F
-Seg-GCRN (GENIA+PubMed)	           0.685	0.665	0.675	                   	0.813	0.790	0.801	               	0.705	0.739	0.722
++------------------+-------------------------------+---------+---------+-----+--------------------------+---------+---------+-----+-----------------------------+---------+---------+
+|                  |                               |         |         |     | Medical                  |         |         |     | Medical                     |         |         |
+|   System         |   Medical                     |         |         |     |                          |         |         |     |                             |         |         |
+|                  |   treatment–problem relations |         |         |     |   test–problem relations |         |         |     |   problem–problem relations |         |         |
+|                  |                               |         |         |     |                          |         |         |     |                             |         |         |
++------------------+-------------------------------+---------+---------+-----+--------------------------+---------+---------+-----+-----------------------------+---------+---------+
+|                  |                               |         |         |     |                          |         |         |     |                             |         |         |
+|                  |   P                           |   R     |   F     |     |   P                      |   R     |   F     |     |   P                         |   R     |   F     |
+|                  |                               |         |         |     |                          |         |         |     |                             |         |         |
++------------------+-------------------------------+---------+---------+-----+--------------------------+---------+---------+-----+-----------------------------+---------+---------+
+|                  |                               |         |         |     |                          |         |         |     |                             |         |         |
+|   Seg-GCRN       |   0.685                       |   0.665 |   0.675 |     |   0.813                  |   0.790 |   0.801 |     |   0.705                     |   0.739 |   0.722 |
+|   (GENIA+PubMed) |                               |         |         |     |                          |         |         |     |                             |         |         |
+|                  |                               |         |         |     |                          |         |         |     |                             |         |         |
++------------------+-------------------------------+---------+---------+-----+--------------------------+---------+---------+-----+-----------------------------+---------+---------+
