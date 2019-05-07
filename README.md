@@ -25,7 +25,7 @@ By default, tensorflow is multiple-GPU friendly and it automatically distributes
 
 ### The Performance of Seg-GCRN
 
-| System   | treatment–problem  |       |       |  | test–problem  |      |       |  | problem–problem  |       |       |
+| System   | treatment–problem                  |  | test–problem                 |  | problem–problem                  |
 |----------|--------------------|-------|-------|--|---------------|------|-------|--|------------------|-------|-------|
 |          | P                  | R     | F     |  | P             | R    | F     |  | P                | R     | F     |
 | Seg-GCRN | 0.685              | 0.665 | 0.675 |  | 0.813         | 0.79 | 0.801 |  | 0.705            | 0.739 | 0.722 |
