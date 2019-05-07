@@ -23,6 +23,7 @@ Run train_pp_gcn.py for PP relation category
 ### Sidenote: Using the GPU
 By default, tensorflow is multiple-GPU friendly and it automatically distributes the loads. However, you can also manually lock your computation to one or more of the GPUs. (https://www.tensorflow.org/programmers_guide/using_gpu)
 
+The Performance of Seg-GCRN
 
 | System   | treatment–problem  |       |       |  | test–problem  |      |       |  | problem–problem  |       |       |
 |----------|--------------------|-------|-------|--|---------------|------|-------|--|------------------|-------|-------|
