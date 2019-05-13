@@ -24,6 +24,7 @@ Run train_pp_gcn.py for PP relation category
 By default, tensorflow is multiple-GPU friendly and it automatically distributes the loads. However, you can also manually lock your computation to one or more of the GPUs. (https://www.tensorflow.org/programmers_guide/using_gpu)
 
 ### The Performance of Seg-GCRN
+Due to historical reasons, part of the i2b2/VA 2010 challenge dataset is not available in the current release from the i2b2 website. At the request of multiple colleagues, we have also tested our systems on the current partial release of the i2b2/VA 2010 relation challenge dataset as follows.
 
 | System   | treatment–problem  |       |       |  | test–problem  |      |       |  | problem–problem  |       |       |
 |----------|--------------------|-------|-------|--|---------------|------|-------|--|------------------|-------|-------|
